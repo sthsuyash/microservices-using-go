@@ -20,5 +20,16 @@ func main() {
 }
 
 func basicHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, World!")) // Write function takes a byte array as input])
+
+	if r.Method == http.MethodGet {
+		// handle GET
+		if r.URL.Path == "/" {
+			w.Write([]byte("Hello, World from home api!")) // Write function takes a byte array as input
+			return
+		}
+		if r.URL.Path == "/about" {
+			w.Write([]byte("Hello, World from about api!"))
+			return
+		}
+	}
 }
