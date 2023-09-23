@@ -1,12 +1,12 @@
 package application
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/sthsuyash/microservices-using-go/handler"
 )
 
 func loadRoutes() *chi.Mux {
@@ -18,18 +18,17 @@ func loadRoutes() *chi.Mux {
 		w.Write([]byte("Hello World!"))
 	})
 
+	router.Route("/orders", loadOrderRoutes)
+
 	return router
 }
 
-func (app *App) Routes(ctx context.Context) error {
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: app.router,
-	}
+func loadOrderRoutes(router chi.Router) {
+	orderHandler := &handler.Order{}
 
-	err := server.ListenAndServe()
-	if err != nil {
-		return fmt.Errorf("failed to start server: %w", err)
-	}
-	return nil // for success case
+	router.Post("/", orderHandler.Create)
+	router.Get("/", orderHandler.List)
+	router.Get("/{id}", orderHandler.GetByID)
+	router.Put("/{id}", orderHandler.UpdateByID)
+	router.Delete("/{id}", orderHandler.DeleteByID)
 }
